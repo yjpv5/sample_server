@@ -4,10 +4,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const connectDB = () => {
-  mongoose.connect(process.env.MONGODB_URL, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  });
+  mongoose.connect(process.env.MONGODB_URL);
 
   const connection = mongoose.connection;
 
@@ -20,4 +17,4 @@ const connectDB = () => {
   });
 };
 
-module.exports = connectDB;
+module.exports = {connectDB};

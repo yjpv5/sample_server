@@ -1,10 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { connectDB } from './config/db.js';
-import userRoutes from './routes/userRoutes.js';
-import resourceRoutes from './routes/resourceRoutes.js';
-import { authenticate } from './middlewares/auth.js';
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const { connectDB } = require('./config/db.js');
+const userRoutes = require('./controllers/userRouter.js');
+
  
 // 环境变量配置
 dotenv.config();
@@ -35,4 +34,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
  
-export default app;
+module.exports = app;

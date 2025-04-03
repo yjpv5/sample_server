@@ -1,5 +1,5 @@
-import express from 'express';
-import * as userService from '../services/userService.js';
+const express = require('express');
+const userService = require('../services/userService.js');
  
 const router = express.Router();
 
@@ -39,4 +39,4 @@ router.post('/login', async (req, res) => {
   }
 });
  
-export default router;
+module.exports=router;

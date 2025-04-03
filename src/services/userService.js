@@ -1,7 +1,9 @@
-import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+const User=require('../models/User.js');
+const jwt=require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+
  
-export const registerUser = async (username, password) => {
+exports.registerUser = async (username, password) => {
   const existingUser = await User.findOne({ username });
   if (existingUser) {
     throw new Error('Username already exists');
@@ -9,7 +11,7 @@ export const registerUser = async (username, password) => {
   return User.create({ username, password });
 };
  
-export const loginUser = async (username, password) => {
+exports.loginUser = async (username, password) => {
   const user = await User.findOne({ username });
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new Error('Invalid credentials');
