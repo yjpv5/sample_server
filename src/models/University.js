@@ -7,6 +7,14 @@ const universitySchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      lowercase: true, // Convert to lowercase before saving
+      validate: {
+        validator: async function (name) {
+          const university = await this.constructor.findOne({ name });
+          return !university || this._id.equals(university._id);
+        },
+        message: 'University name already exists'
+      }
     },
     country: {
       type: String,
@@ -45,8 +53,11 @@ const universitySchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-universitySchema.virtual("id").get(() => {
+universitySchema.index({ name: 1 }, {
+  unique: true,
+  collation: { locale: 'en', strength: 2 }
+});
+universitySchema.virtual("id").get(function () {
   return this._id.toHexString();
 });
 
@@ -121,8 +132,4 @@ const isValidURL = (url) => {
   });
 };
 
-// const activeUniversities = await University.find().active();
-// const usUniversities = await University.find().active().byCountry('united states');
-// const recentBookmarks = await University.find().bookmarked().createdAfter('2025-01-01');
-// const recentlyUpdated = await University.find().active().recentlyModified(7);
-// const searchResults = await University.find().active().nameContains('tech');
+module.exports = mongoose.model('University', universitySchema);

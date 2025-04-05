@@ -4,17 +4,35 @@ const mongoose = require('mongoose');
 
 
 
-jest.mock('../src/models/University', () => ({
-    find: jest.fn().mockReturnThis(),
-    findById: jest.fn().mockReturnThis(),
-    active: jest.fn().mockReturnThis(),
-    deleted: jest.fn().mockReturnThis(),
-    bookmarked: jest.fn().mockReturnThis(),
-    byCountry: jest.fn().mockReturnThis(),
-    createdAfter: jest.fn().mockReturnThis(),
-    exec: jest.fn(),
-    save: jest.fn(),
-}));
+jest.mock('../src/models/University', () => {
+    const mockSave = jest.fn();
+    const mockValidate = jest.fn();
+    const MockUniversity = jest.fn().mockImplementation((data) => {
+        return {
+            ...data,
+            validate: mockValidate,
+            save: mockSave
+        };
+    });
+
+    // Add static methods to the constructor
+    MockUniversity.find = jest.fn().mockReturnThis();
+    MockUniversity.findById = jest.fn();
+    MockUniversity.active = jest.fn().mockReturnThis();
+    MockUniversity.deleted = jest.fn().mockReturnThis();
+    MockUniversity.bookmarked = jest.fn().mockReturnThis();
+    MockUniversity.byCountry = jest.fn().mockReturnThis();
+    MockUniversity.createdAfter = jest.fn().mockReturnThis();
+    MockUniversity.exec = jest.fn();
+
+    // Add the mock functions as properties to allow access in tests
+    MockUniversity.mockSave = mockSave;
+    MockUniversity.mockValidate = mockValidate;
+
+    return MockUniversity;
+
+
+});
 
 describe('University Service', () => {
     const validId = new mongoose.Types.ObjectId().toHexString();
@@ -103,7 +121,51 @@ describe('University Service', () => {
     });
 
     describe('createUniversity', () => {
+        const validUniversityData = {
+            name: 'New University',
+            country: 'Canada',
+            website: 'https://example.com'
+        };
 
+        it('should successfully create a university with valid data', async () => {
+            const savedUniversity = {
+                _id: validId,
+                ...validUniversityData,
+                isActive: true,
+                isBookmark: false,
+                deletedAt: null
+            };
+            University.mockValidate.mockResolvedValue(undefined); // Validation passes
+            University.mockSave.mockResolvedValue(savedUniversity);
+            const result = await createUniversity(validUniversityData);
+
+            expect(University).toHaveBeenCalledWith(validUniversityData);
+            expect(University.mockValidate).toHaveBeenCalled();
+            expect(University.mockSave).toHaveBeenCalled();
+            expect(result).toEqual(savedUniversity);
+
+        });
+
+        it('should throw validation error for invalid data', async () => {
+            University.mockValidate.mockRejectedValue(new Error('Country is required'));
+
+            await expect(createUniversity({ name: 'Invalid University' }))
+                .rejects.toThrow('University creation failed: Country is required');
+        });
+
+        it('should throw error for invalid URLs in webpages', async () => {
+            // Setup validation error for invalid URL
+            const dataWithInvalidURL = {
+                name: 'New University',
+                country: 'Canada',
+                webpages: ['invalid-url']
+            };
+
+            University.mockValidate.mockRejectedValue(new Error('invalid-url contains invalid url'));
+
+            await expect(createUniversity(dataWithInvalidURL))
+                .rejects.toThrow('University creation failed: invalid-url contains invalid url');
+        });
 
     });
 })
