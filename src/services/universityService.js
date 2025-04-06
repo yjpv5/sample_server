@@ -46,6 +46,13 @@ const getAllUniversities = async (filters) => {
 
         const countQuery = query.clone();
         const total = await countQuery.countDocuments();
+        const totalPages = Math.ceil(total / limit);
+
+        if (page > totalPages && total > 0) {
+            const error = new Error(`Page number ${page} is out of range. Total pages: ${totalPages}`);
+            error.statusCode = 400;
+            throw error;
+        }
 
         const universities = await query.skip(skip).limit(limit).exec();
         return {
