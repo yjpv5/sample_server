@@ -3,6 +3,21 @@ const mongoose = require("mongoose");
 
 const getAllUniversities = async (filters) => {
     try {
+        const page = parseInt(filters.page) || 1;
+        const limit = parseInt(filters.limit) || 10;
+        if (page < 1) {
+            const error = new Error("Page must be greater than or equal to 1");
+            error.statusCode = 400;
+            throw error;
+        }
+
+        if (limit < 1 || limit > 100) {
+            const error = new Error("Limit must be between 1 and 100");
+            error.statusCode = 400;
+            throw error;
+        }
+        const skip = (page - 1) * limit;
+
 
         let query = University.find();
         if (filters.active === "true") {
@@ -26,7 +41,24 @@ const getAllUniversities = async (filters) => {
             }
             query = query.createdAfter(date);
         }
-        return await query.exec();
+
+        query = query.sort({ isBookmark: -1 });
+
+        const countQuery = query.clone();
+        const total = await countQuery.countDocuments();
+
+        const universities = await query.skip(skip).limit(limit).exec();
+        return {
+            universities,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+                hasNextPage: page * limit < total,
+                hasPrevPage: page > 1
+            }
+        };
     } catch (error) {
         error.statusCode = error.statusCode || 500;
         throw error;
@@ -136,7 +168,7 @@ const toggleBookmarkById = async (id) => {
         }
         return university;
     } catch (error) {
-        const serviceError = new Error(`Toggle bookmark failed: ${error.message}`);
+        const serviceError = new Error(`Toggle bookmark (service) failed: ${error.message}`);
         serviceError.statusCode = error.statusCode || 500;
         throw serviceError;
     }

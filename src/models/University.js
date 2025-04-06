@@ -10,6 +10,7 @@ const universitySchema = new mongoose.Schema(
       lowercase: true, // Convert to lowercase before saving
       validate: {
         validator: async function (name) {
+          if (!this.isModified('name')) return true;
           const university = await this.constructor.findOne({ name });
           return !university || this._id.equals(university._id);
         },
@@ -101,7 +102,7 @@ universitySchema.statics.toggleBookmark = async function (id) {
     await university.save()
     return university;
   } catch (error) {
-    throw new Error(`Toggle bookmark failed: ${error.message}`);
+    throw new Error(`Toggle bookmark (model) failed: ${error.message}`);
   }
 };
 
