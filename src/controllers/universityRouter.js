@@ -7,6 +7,7 @@ const {
     deleteUniversityById,
     toggleBookmarkById,
 } = require("../services/universityService");
+const { authJWT } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ router.get('/university', async (req, res, next) => {
 })
 
 //create a new university
-router.post('/university', async (req, res, next) => {
+router.post('/university', authJWT, async (req, res, next) => {
     try {
         const newUniversity = await createUniversity(req.body);
         res.status(201).json(newUniversity);
@@ -42,7 +43,7 @@ router.get('/university/:id', async (req, res, next) => {
 })
 
 //update a univsity by id
-router.put('/university/:id', async (req, res, next) => {
+router.put('/university/:id', authJWT, async (req, res, next) => {
     try {
         const updatedUniversity = await updateUniversityById(req.params.id, req.body);
         res.status(200).json(updatedUniversity);
@@ -52,7 +53,7 @@ router.put('/university/:id', async (req, res, next) => {
 })
 
 //soft delete by id
-router.delete('/university/:id', async (req, res, next) => {
+router.delete('/university/:id', authJWT, async (req, res, next) => {
     try {
         const deletedUniversity = await deleteUniversityById(req.params.id);
         res.status(200).json(deletedUniversity);
@@ -62,7 +63,7 @@ router.delete('/university/:id', async (req, res, next) => {
 })
 
 //toggle a bookmark by id
-router.post('/university/bookmark/:id', async (req, res, next) => {
+router.post('/university/bookmark/:id', authJWT, async (req, res, next) => {
     try {
         const deletedUniversity = await toggleBookmarkById(req.params.id);
         res.status(201).json(deletedUniversity);
