@@ -3,7 +3,7 @@ const userService = require("../services/userService.js");
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
   if (!username || !password) {
     const error = new Error("username and password are required.");
@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
   if (!username || !password) {
     const error = new Error("username and password are required.");

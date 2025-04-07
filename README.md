@@ -1,4 +1,4 @@
-# Sample_server
+# Sample server
 
 A REST API for managing university data with JWT authentication and MongoDB integration.
 
@@ -12,7 +12,7 @@ A REST API for managing university data with JWT authentication and MongoDB inte
 
 ## Quick Start :rocket:
 
-1. ### Clone Repository
+1. ### Clone or download repository
 
 ```bash
 git clone https://github.com/yjpv5/sample_server.git
@@ -189,7 +189,7 @@ Authorization: Bearer your_jwt_token
 ### Bookmark a university by id
 
 ```bash
-DELETE /api/resources/university/:id
+POST /api/resources/university/bookmark/:id
 ```
 
 Headers:
