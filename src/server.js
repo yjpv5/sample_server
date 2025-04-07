@@ -20,14 +20,15 @@ app.use('/api/auth', userRoutes);
 app.use('/api/resources', universityResource);
 
 app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: "server connected"
-  })
+  console.log('Root route accessed');
+  res.send('Welcome to the Home Page');
 })
 
 app.use(errorHandler);
 
+
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

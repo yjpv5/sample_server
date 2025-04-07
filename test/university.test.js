@@ -56,7 +56,12 @@ describe('University Service', () => {
         it('Should apply active filter', async () => {
             const mockQuery = {
                 active: jest.fn().mockReturnThis(),
-                exec: jest.fn().mockResolvedValue([])
+                exec: jest.fn().mockResolvedValue([]),
+                sort: jest.fn().mockReturnThis(),
+                clone: jest.fn().mockReturnThis(),
+                countDocuments: jest.fn().mockResolvedValue(0),
+                skip: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
             };
 
             // 2. Properly mock the find() method
@@ -69,6 +74,11 @@ describe('University Service', () => {
             expect(University.find).toHaveBeenCalled();
             expect(mockQuery.active).toHaveBeenCalled();
             expect(mockQuery.exec).toHaveBeenCalled();
+            expect(mockQuery.sort).toHaveBeenCalled();
+            expect(mockQuery.clone).toHaveBeenCalled();
+            expect(mockQuery.countDocuments).toHaveBeenCalled();
+            expect(mockQuery.skip).toHaveBeenCalled();
+            expect(mockQuery.limit).toHaveBeenCalled();
         });
         it('should handle date parsing error', async () => {
             await expect(getAllUniversities({ createdAfter: 'invalid-date' })).rejects.toThrow('Invalid date format');
