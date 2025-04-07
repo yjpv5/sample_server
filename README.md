@@ -1,90 +1,199 @@
 # sample_server
 
-# after download the code, cd to the sample_server folder
+A REST API for managing university data with JWT authentication and MongoDB integration.
 
-run npm install to install necessary dependencies.
+## Getting Started
 
-# create a new .env file in root level of project
+### Prerequisites
 
-PORT=''
-MONGODB_URL=''
-JWT_SECRET=''
+- Node.js
+- npm
+- MongoDB account
 
-# choose your PORT for server
+## Quick Start
 
-for example PORT='3000'
+1. ### Clone Repository
 
-# to create JWT SECRET KEY by copy this command line to your cmd to generate the key and save it into JWT_SECRET in .env file
+```bash
+git clone https://github.com/yourusername/sample_server.git
+cd sample_server
+```
 
+2. ### Install Dependencies
+
+```bash
+npm install
+```
+
+3. ### Create a .env file in the root directory with the following variables
+
+```bash
+PORT=3000
+MONGODB_URL=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+```
+
+## Environment Configuration
+
+### Port
+
+Choose any available port for your server (default: 3000), if facing CAN NOT GET error, can try to Change other PORT.
+
+### JWT Secret
+
+Generate a secure JWT secret using:
+
+```bash
 node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-JWT_SECRET='123sdasd3eFGWDSD..........'
+```
 
-# copy your mongoDB url into MONGODB_URL in .env file
+Copy the output to your .env file:
 
-MONGODB_URL='mongodb+srv://{UserAccount}:{Password}@cluster0.1y3aoud.mongodb.net/the_database_name'
+```bash
+JWT_SECRET=generated_secret_key
+```
 
-# run or test code
+### MongoDB Connection
 
-npm start to run the server
-npm test to test the code
+```bash
+MONGODB_URL=mongodb+srv://{UserAccount}:{Password}@cluster0.example.mongodb.net/database_name
+```
 
-## If testing by using postman
+### Running the Application
 
-# Route list for Authtication:
+Start the server:
 
-1. Simple user register:
-   Example API: Method: POST, http://localhost:3000/api/auth/register
-   in body select raw JSON format
-   {
-   "username": "testing2",
-   "password":"123456"
-   }
+```bash
+npm start
+```
 
-2. Simple user login:
-   Example API: Method: POST, http://localhost:3000/api/auth/login
-   in body select raw JSON format
-   {
-   "username": "testing2",
-   "password":"123456"
-   }
+Run tests:
 
-# Route list for resource:
+```bash
+npm test
+```
 
-1. Get all universities with query and pagination:
-   Example API: Method: GET, http://localhost:3000/api/resources/university
-   in Params: list of key and the default value:
-   active=true
-   bookmarked=true
-   country='any country string'
-   deleted=true
-   page=1
-   limit=10
+## API Documentation
 
-2. Create a new university
-   Example API: Method: POST, http://localhost:3000/api/resources/university
-   In Headers put key 'Authorization' and value = 'Bearer ...replace by token...'
-   in body select raw JSON format
-   {
-   "name":"mock university 7",
-   "country":"Singapore",
-   "webpages":["https://example3.com"]
-   }
+### Authentication Endpoints
 
-3. Get a university detail by its id:
-   Example API: Method: GET, http://localhost:3000/api/resources/university/67f1622a6542721bbd8ebd86
+### Register User:
 
-4. Update details of a specific university
-   Example API: Method:PUT, http://localhost:3000/api/resources/university/67f1622a6542721bbd8ebd86
-   In Headers put key 'Authorization' and value = 'Bearer ...replace by token...'
-   in body select raw JSON format
-   {
-   "name":"mock university 7"
-   }
+```bash
+POST /api/auth/register
+```
 
-5. Delete a university by id:
-   Example API: Method: DELETE, http://localhost:3000/api/resources/university/67f1622a6542721bbd8ebd86
-   In Headers put key 'Authorization' and value = 'Bearer ...replace by token...'
+Request body (JSON):
 
-6. Bookmark a university by id:
-   Example API: Method: POST, http://localhost:3000/api/resources/university/bookmark/67f16280c531a1caf737c8d6
-   In Headers put key 'Authorization' and value = 'Bearer ...replace by token...'
+```bash
+{
+  "username": "user123",
+  "password": "password123"
+}
+```
+
+### Login user:
+
+```bash
+POST /api/auth/login
+```
+
+Request body (JSON):
+
+```bash
+{
+  "username": "user123",
+  "password": "password123"
+}
+```
+
+Returns JWT token for authentication.
+
+### Resource Endpoints
+
+### Get All Universities
+
+```bash
+GET /api/resources/university
+```
+
+| Parameter  | Type    | Default | Description                    |
+| ---------- | ------- | ------- | ------------------------------ |
+| active     | boolean | true    | Filter by active status        |
+| bookmarked | boolean | true    | Filter bookmarked universities |
+| country    | string  | null    | Filter by country name         |
+| deleted    | boolean | true    | Include deleted universities   |
+| page       | number  | 1       | Page number for pagination     |
+| limit      | number  | 10      | Number of results per page     |
+
+### Create University
+
+```bash
+POST /api/resources/university
+```
+
+Headers:
+
+```bash
+Authorization: Bearer your_jwt_token
+```
+
+Request body (JSON):
+
+```bash
+{
+  "name": "Example University",
+  "country": "Singapore",
+  "webpages": ["https://example.com"]
+}
+```
+
+### Get a university by id
+
+```bash
+GET /api/resources/university/:id
+```
+
+### Update a university by id
+
+```bash
+PUT /api/resources/university/:id
+```
+
+Headers:
+
+```bash
+Authorization: Bearer your_jwt_token
+```
+
+Request body (JSON):
+
+```bash
+{
+  "name": "Updated University Name"
+}
+```
+
+### Delete university by id
+
+```bash
+DELETE /api/resources/university/:id
+```
+
+Headers:
+
+```bash
+Authorization: Bearer your_jwt_token
+```
+
+### Bookmark a university by id
+
+```bash
+DELETE /api/resources/university/:id
+```
+
+Headers:
+
+```bash
+Authorization: Bearer your_jwt_token
+```
