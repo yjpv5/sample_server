@@ -30,8 +30,6 @@ app.get('/', async (req, res) => {
   })
 })
 
-app.use(errorHandler);
-
 // 启动服务器
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
