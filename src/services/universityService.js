@@ -1,6 +1,7 @@
 const University = require("../models/University");
 const mongoose = require("mongoose");
 
+//get all data with/without filter
 const getAllUniversities = async (filters) => {
     try {
         const page = parseInt(filters.page) || 1;
@@ -72,6 +73,7 @@ const getAllUniversities = async (filters) => {
     }
 };
 
+//create new university
 const createUniversity = async (universityData) => {
     try {
         delete universityData.deletedAt;
@@ -87,6 +89,7 @@ const createUniversity = async (universityData) => {
     }
 };
 
+//get by data by id
 const getUniversityById = async (id) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -107,6 +110,7 @@ const getUniversityById = async (id) => {
     }
 };
 
+// update a data by id
 const updateUniversityById = async (id, updateData) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -122,7 +126,6 @@ const updateUniversityById = async (id, updateData) => {
             throw error;
         }
 
-        // Prevent updating deletion status through this service
         delete updateData.deletedAt;
 
         Object.keys(updateData).forEach((key) => {
@@ -138,6 +141,7 @@ const updateUniversityById = async (id, updateData) => {
     }
 };
 
+//delete a data by id
 const deleteUniversityById = async (id) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         const error = new Error('Invalid university ID format');
@@ -160,6 +164,7 @@ const deleteUniversityById = async (id) => {
     }
 };
 
+//toggle a bookmark
 const toggleBookmarkById = async (id) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         const error = new Error('Invalid university ID format');

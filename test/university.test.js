@@ -1,4 +1,4 @@
-const { getAllUniversities, createUniversity, getUniversityById, updateUniversityById } = require('../src/services/universityService');
+const { getAllUniversities, createUniversity, getUniversityById, updateUniversityById, deleteUniversityById, toggleBookmarkById } = require('../src/services/universityService');
 const University = require('../src/models/University');
 const mongoose = require('mongoose');
 
@@ -56,24 +56,32 @@ describe('University Service', () => {
         it('Should apply active filter', async () => {
             const mockQuery = {
                 active: jest.fn().mockReturnThis(),
-                exec: jest.fn().mockResolvedValue([])
+                exec: jest.fn().mockResolvedValue([]),
+                sort: jest.fn().mockReturnThis(),
+                clone: jest.fn().mockReturnThis(),
+                countDocuments: jest.fn().mockResolvedValue(0),
+                skip: jest.fn().mockReturnThis(),
+                limit: jest.fn().mockReturnThis(),
             };
 
-            // 2. Properly mock the find() method
             University.find = jest.fn().mockReturnValue(mockQuery);
 
-            // 3. Execute the service function
             await getAllUniversities({ active: 'true' });
 
-            // 4. Verify the calls
             expect(University.find).toHaveBeenCalled();
             expect(mockQuery.active).toHaveBeenCalled();
             expect(mockQuery.exec).toHaveBeenCalled();
+            expect(mockQuery.sort).toHaveBeenCalled();
+            expect(mockQuery.clone).toHaveBeenCalled();
+            expect(mockQuery.countDocuments).toHaveBeenCalled();
+            expect(mockQuery.skip).toHaveBeenCalled();
+            expect(mockQuery.limit).toHaveBeenCalled();
         });
         it('should handle date parsing error', async () => {
             await expect(getAllUniversities({ createdAfter: 'invalid-date' })).rejects.toThrow('Invalid date format');
         });
     });
+
     describe('getUniversityById', () => {
         it('should throw error for invalid ID', async () => {
             await expect(getUniversityById('invalid-id'))
@@ -93,6 +101,7 @@ describe('University Service', () => {
             expect(University.findById).toHaveBeenCalledWith(validId);
         });
     });
+
     describe('updateUniversityById', () => {
 
         it('should prevent updating deletedAt', async () => {
@@ -135,7 +144,7 @@ describe('University Service', () => {
                 isBookmark: false,
                 deletedAt: null
             };
-            University.mockValidate.mockResolvedValue(undefined); // Validation passes
+            University.mockValidate.mockResolvedValue(undefined);
             University.mockSave.mockResolvedValue(savedUniversity);
             const result = await createUniversity(validUniversityData);
 
@@ -154,7 +163,6 @@ describe('University Service', () => {
         });
 
         it('should throw error for invalid URLs in webpages', async () => {
-            // Setup validation error for invalid URL
             const dataWithInvalidURL = {
                 name: 'New University',
                 country: 'Canada',
@@ -168,4 +176,51 @@ describe('University Service', () => {
         });
 
     });
+
+    describe('deleteUniversityById', () => {  
+        it('should throw an error for invalid ID format', async () => {
+            await expect(deleteUniversityById('invalid-id'))
+                .rejects.toThrow('Invalid university ID format');
+        });
+    
+        it('should return the university when softDelete is successful', async () => {
+            // simulate the softdelete to resolve a valid object
+            University.softDelete = jest.fn().mockResolvedValue(mockUniversity);
+    
+            const result = await deleteUniversityById(validId);
+            expect(University.softDelete).toHaveBeenCalledWith(validId);
+            expect(result).toEqual(mockUniversity);
+        });
+    
+        it('should throw an error if university is not found', async () => {
+            // simulate a softdelete but no data
+            University.softDelete = jest.fn().mockResolvedValue(null);
+    
+            await expect(deleteUniversityById(validId))
+                .rejects.toThrow('University not found');
+        });
+    });
+    
+    describe('toggleBookmarkById', () => {    
+        it('should throw an error for invalid ID format', async () => {
+            await expect(toggleBookmarkById('invalid-id'))
+                .rejects.toThrow('Invalid university ID format');
+        });
+    
+        it('should return the university when toggleBookmark is successful', async () => {
+            University.toggleBookmark = jest.fn().mockResolvedValue(mockUniversity);
+    
+            const result = await toggleBookmarkById(validId);
+            expect(University.toggleBookmark).toHaveBeenCalledWith(validId);
+            expect(result).toEqual(mockUniversity);
+        });
+    
+        it('should throw an error if university is not found', async () => {
+            University.toggleBookmark = jest.fn().mockResolvedValue(null);
+    
+            await expect(toggleBookmarkById(validId))
+                .rejects.toThrow('University not found');
+        });
+    });
+    
 })

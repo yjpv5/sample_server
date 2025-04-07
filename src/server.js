@@ -7,31 +7,28 @@ const universityResource = require('./controllers/universityRouter.js')
 const errorHandler = require('./middleware/errorHandler.js')
 
 
-// 环境变量配置
 dotenv.config();
 
-// 创建Express应用
 const app = express();
 
-// 中间件
 app.use(cors());
 app.use(express.json());
 
-// 数据库连接
 connectDB();
 
-// 路由配置
 app.use('/api/auth', userRoutes);
 app.use('/api/resources', universityResource);
 
 app.get('/', async (req, res) => {
-  res.status(200).send({
-    message: "server connected"
-  })
+  console.log('Root route accessed');
+  res.send('Welcome to the Home Page');
 })
 
-// 启动服务器
+app.use(errorHandler);
+
+
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
