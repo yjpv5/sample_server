@@ -1,8 +1,8 @@
-# sample_server
+# Sample_server
 
 A REST API for managing university data with JWT authentication and MongoDB integration.
 
-## Getting Started
+## Getting Started :rocket:
 
 ### Prerequisites
 
@@ -10,7 +10,7 @@ A REST API for managing university data with JWT authentication and MongoDB inte
 - npm
 - MongoDB account
 
-## Quick Start
+## Quick Start :rocket:
 
 1. ### Clone Repository
 
@@ -33,7 +33,7 @@ MONGODB_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
 
-## Environment Configuration
+## Environment Configuration :rocket:
 
 ### Port
 
@@ -73,7 +73,7 @@ Run tests:
 npm test
 ```
 
-## API Documentation
+## API Documentation :rocket:
 
 ### Authentication Endpoints
 
