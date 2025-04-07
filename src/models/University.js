@@ -126,12 +126,24 @@ universitySchema.query.active = function () {
   return this.where({ isActive: true, deletedAt: null });
 };
 
+universitySchema.query.activeFalse = function () {
+  return this.or([{ isActive: false }, { deletedAt: { $ne: null } }]);
+};
+
 universitySchema.query.bookmarked = function () {
   return this.where({ isBookmark: true });
 };
 
+universitySchema.query.bookmarkedFalse = function () {
+  return this.where({ isBookmark: false });
+};
+
 universitySchema.query.deleted = function () {
   return this.where({ deletedAt: { $ne: null } });
+};
+
+universitySchema.query.deletedFalse = function () {
+  return this.where({ deletedAt: null });
 };
 
 universitySchema.query.createdAfter = function (date) {

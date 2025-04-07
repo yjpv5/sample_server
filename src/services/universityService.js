@@ -23,13 +23,22 @@ const getAllUniversities = async (filters) => {
         let query = University.find();
         if (filters.active === "true") {
             query = query.active();
+        } else if (filters.active === "false") {
+            query = query.activeFalse();
         }
+
         if (filters.deleted === "true") {
             query = query.deleted();
+        } else if (filters.deleted === "false") {
+            query = query.deletedFalse();
         }
+
         if (filters.bookmarked === "true") {
             query = query.bookmarked();
+        } else if (filters.bookmarked === "false") {
+            query = query.bookmarkedFalse();
         }
+
         if (filters.country) {
             query = query.byCountry(filters.country);
         }
