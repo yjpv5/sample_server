@@ -7,7 +7,7 @@ const universitySchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowercase: true, // Convert to lowercase before saving
+      lowercase: true,
       validate: {
         validator: async function (name) {
           if (!this.isModified("name")) return true;
@@ -61,6 +61,8 @@ universitySchema.index(
     collation: { locale: "en", strength: 2 },
   }
 );
+
+//create a virtual id, convert object to string
 universitySchema.virtual("id").get(function () {
   return this._id.toHexString();
 });
@@ -83,6 +85,7 @@ universitySchema.statics.softDelete = async function (id) {
   }
 };
 
+//restore the sfot deleted data
 universitySchema.statics.restore = async function (id) {
   try {
     const university = await this.findById(id);
@@ -101,6 +104,7 @@ universitySchema.statics.restore = async function (id) {
   }
 };
 
+//toggle the bookmark
 universitySchema.statics.toggleBookmark = async function (id) {
   try {
     const university = await this.findById(id);
