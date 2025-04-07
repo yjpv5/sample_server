@@ -10,12 +10,12 @@ const universitySchema = new mongoose.Schema(
       lowercase: true, // Convert to lowercase before saving
       validate: {
         validator: async function (name) {
-          if (!this.isModified('name')) return true;
+          if (!this.isModified("name")) return true;
           const university = await this.constructor.findOne({ name });
           return !university || this._id.equals(university._id);
         },
-        message: 'University name already exists'
-      }
+        message: "University name already exists",
+      },
     },
     country: {
       type: String,
@@ -54,10 +54,13 @@ const universitySchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-universitySchema.index({ name: 1 }, {
-  unique: true,
-  collation: { locale: 'en', strength: 2 }
-});
+universitySchema.index(
+  { name: 1 },
+  {
+    unique: true,
+    collation: { locale: "en", strength: 2 },
+  }
+);
 universitySchema.virtual("id").get(function () {
   return this._id.toHexString();
 });
@@ -66,14 +69,17 @@ universitySchema.statics.softDelete = async function (id) {
   try {
     const university = await this.findById(id);
     if (!university) {
-      throw new Error('University not found!')
+      const error = new Error("University not found");
+      error.statusCode = 404;
+      throw error;
     }
     university.deletedAt = new Date();
     university.isActive = false;
-    await university.save()
+    await university.save();
     return university;
   } catch (error) {
-    throw new Error(`Soft delete failed: ${error.message}`);
+    error.statusCode = error.statusCode || 500;
+    throw error;
   }
 };
 
@@ -81,14 +87,17 @@ universitySchema.statics.restore = async function (id) {
   try {
     const university = await this.findById(id);
     if (!university) {
-      throw new Error('University not found!')
+      const error = new Error("University not found");
+      error.statusCode = 404;
+      throw error;
     }
     university.deletedAt = null;
     university.isActive = true;
-    await university.save()
+    await university.save();
     return university;
   } catch (error) {
-    throw new Error(`University restore failed: ${error.message}`);
+    error.statusCode = error.statusCode || 500;
+    throw error;
   }
 };
 
@@ -96,13 +105,16 @@ universitySchema.statics.toggleBookmark = async function (id) {
   try {
     const university = await this.findById(id);
     if (!university) {
-      throw new Error('University not found!')
+      const error = new Error("University not found");
+      error.statusCode = 404;
+      throw error;
     }
     university.isBookmark = !university.isBookmark;
-    await university.save()
+    await university.save();
     return university;
   } catch (error) {
-    throw new Error(`Toggle bookmark (model) failed: ${error.message}`);
+    error.statusCode = error.statusCode || 500;
+    throw error;
   }
 };
 
@@ -123,7 +135,7 @@ universitySchema.query.createdAfter = function (date) {
 };
 
 universitySchema.query.byCountry = function (country) {
-  return this.where({ country: new RegExp(country, 'i') });
+  return this.where({ country: new RegExp(country, "i") });
 };
 
 const isValidURL = (url) => {
@@ -133,4 +145,4 @@ const isValidURL = (url) => {
   });
 };
 
-module.exports = mongoose.model('University', universitySchema);
+module.exports = mongoose.model("University", universitySchema);
