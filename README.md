@@ -15,7 +15,7 @@ A REST API for managing university data with JWT authentication and MongoDB inte
 1. ### Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/sample_server.git
+git clone https://github.com/yjpv5/sample_server.git
 cd sample_server
 ```
 
