@@ -73,7 +73,17 @@ Run tests:
 npm test
 ```
 
-## API Documentation :rocket:
+## Test the API by Swagger :rocket:
+You can test the API by open this url on a browser: http://localhost:${PORT}/api-docs
+For example: 
+```bash
+http://localhost:${PORT}/api-docs
+For example replace with yoyr PORT: 
+http://localhost:3000/api-docs/
+```
+
+
+## Test by Postman & API Documentation :rocket:
 
 ### Authentication Endpoints
 
