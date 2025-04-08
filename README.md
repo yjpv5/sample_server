@@ -75,10 +75,11 @@ npm test
 
 ## Test the API by Swagger :rocket:
 You can test the API by open this url on a browser: http://localhost:${PORT}/api-docs
-For example: 
 ```bash
 http://localhost:${PORT}/api-docs
-For example replace with yoyr PORT: 
+
+For example replace with your PORT: 
+
 http://localhost:3000/api-docs/
 ```
 
